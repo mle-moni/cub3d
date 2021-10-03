@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "gnl/get_next_line.h"
 
 int			has_char(char *buffer, char c)
 {

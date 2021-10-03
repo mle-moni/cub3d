@@ -1,28 +1,87 @@
-SRCS1    = mandatory/main.c mandatory/parsing.c mandatory/utils.c gnl/get_next_line.c gnl/get_next_line_utils.c mandatory/get_params.c mandatory/config.c mandatory/parse_map.c mandatory/split.c mandatory/utils2.c
-SRCS2    = mandatory/draw.c mandatory/game/hooks.c mandatory/game/move.c mandatory/game/raycast.c mandatory/game/dda.c save/bmp.c mandatory/game/display_sprites.c mandatory/init.c
-BSRCS1   = bonus/main.c bonus/parsing.c bonus/utils.c gnl/get_next_line.c gnl/get_next_line_utils.c bonus/get_params.c bonus/config.c bonus/parse_map.c bonus/split.c bonus/utils2.c
-BSRCS2   = bonus/draw.c bonus/game/hooks.c bonus/game/move.c bonus/game/raycast.c bonus/game/dda.c save/bmp.c bonus/game/display_sprites.c bonus/init.c
-BSRCS3   = bonus/game/fps.c bonus/game/hud.c bonus/game/bonus_move.c bonus/game/shift_color.c bonus/game/koopa.c bonus/game/laiktu.c bonus/game/change_map.c bonus/game/konami.c
-OBJS    = ${SRCS1:.c=.o} ${SRCS2:.c=.o}
-B_OBJS    = ${BSRCS1:.c=.o} ${BSRCS2:.c=.o} ${BSRCS3:.c=.o}
-NAME    = Cub3D
-BNAME    = Cub3D_BONUS
-RM      = rm -f
-CC      = gcc
-CFLAGS  = -Wall -Wextra -Werror
-L_FLAGS	= -lmlx -framework OpenGL -framework AppKit
+# used this as inspiration to make it work on linux
+# https://github.com/iciamyplant/Cub3d-Linux/
+
+SRC =	bonus/main.c \
+		bonus/parsing.c \
+		bonus/utils.c \
+		gnl/get_next_line.c \
+		gnl/get_next_line_utils.c \
+		bonus/get_params.c \
+		bonus/config.c \
+		bonus/parse_map.c \
+		bonus/split.c \
+		bonus/utils2.c \
+		bonus/draw.c \
+		bonus/game/hooks.c \
+		bonus/game/move.c \
+		bonus/game/raycast.c \
+		bonus/game/dda.c \
+		save/bmp.c \
+		bonus/game/display_sprites.c \
+		bonus/init.c \
+		bonus/game/fps.c \
+		bonus/game/hud.c \
+		bonus/game/bonus_move.c \
+		bonus/game/shift_color.c \
+		bonus/game/koopa.c \
+		bonus/game/laiktu.c \
+		bonus/game/change_map.c \
+		bonus/game/konami.c
+
+NAME = Cub3D
+
+MLX_DIR = minilibx-linux
+MLX = libmlx.a 
+CC = clang
+
+# diff entre .a et .dylib
+# .a = lib static, les fonctions utilisees sont directement ecrite dans le binaire
+# .dylib = lib dynamique, les fonctions doivent etre chargees au momnent ou on lance le binaire
+
+CFLAGS = -Wall -Wextra -Werror -g #-fsanitize=address
+
+OBJ_DIR = obj
+SRC_DIR = .
+INC_DIR = inc
+
+OBJ = $(addprefix $(OBJ_DIR)/,$(SRC:.c=.o))
+DPD = $(addprefix $(OBJ_DIR)/,$(SRC:.c=.d))
+
 .c.o:
-			${CC} ${CFLAGS} -I. -c $< -o ${<:.c=.o}
-${NAME}:    ${OBJS}
-			${CC} ${CFLAGS} -g3 -fsanitize=address ${L_FLAGS} -o ${NAME} ${OBJS}
-bonus:    	${B_OBJS}
-			${CC} ${CFLAGS} -g3 -fsanitize=address ${L_FLAGS} -o ${BNAME} ${B_OBJS}
-all:        ${NAME}
+	${CC} ${CFLAGS} -c$< -o ${<:.c=.o}
+
+# -C faire make comme si on etait dana le dossier
+# -j multisreder / ameliore la vitesse de compliation
+# Pas de regle opti car makefile mlx pas compatible
+all:
+	@$(MAKE) -j $(NAME)
+
+# permet de pouvoir comparer la derniere modification de la dep par rapport a la regle
+# -L donner le nom du dossier / -l donner le nom le la lib
+# loader path = ecrit le chemin de la mlx dans le binaire pour pouvoir la retrouver au moment ou on lance le binaire
+$(NAME): $(OBJ)
+		${CC} $(CFLAGS) -o $(NAME) $(OBJ) -L $(MLX_DIR) -lmlx -lm -lbsd -lX11 -lXext
+		@echo $(NAME) : Created !
+
+# si le .c est plus recent que le .o on rentre dans la regle
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | .gitignore
+		@mkdir -p $(OBJ_DIR)
+		${CC} $(CFLAGS) -I $(INC_DIR) -I $(MLX_DIR) -c $< -o $@
+
+.gitignore:
+		@echo $(NAME) > .gitignore
+
 clean:
-			${RM} ${OBJS} ${B_OBJS}
-debug:		${OBJS}
-			${CC} ${CFLAGS} -g ${L_FLAGS} -o a.out ${OBJS}
-fclean:     clean
-			${RM} ${NAME} a.out ${BNAME}
-re:         fclean all
-.PHONY:     all clean fclean re bonus
+	@rm -f $(OBJ_DIR)/**/*.o $(OBJ_DIR)/*.o 
+	@echo "obj deleted"
+
+fclean:	clean
+	@rm -rf $(NAME)
+	@echo "[$(NAME)]: deleted"
+
+re: fclean all
+
+.PHONY: all, clean, fclean, re
+
+# Utilise les .d (et ignore s'ils n'existe pas)
+-include $(DPD)

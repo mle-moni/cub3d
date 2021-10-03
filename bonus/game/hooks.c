@@ -52,13 +52,13 @@ static int	key_release_hook(int keycode, void *param)
 	t_config	*conf;
 
 	conf = (t_config*)param;
-	if (keycode == K_W)
+	if (keycode == K_ARR_UP)
 		conf->keyboard.up = 0;
-	else if (keycode == K_S)
+	else if (keycode == K_ARR_DOWN)
 		conf->keyboard.down = 0;
-	else if (keycode == K_D)
+	else if (keycode == K_ARR_RIGHT)
 		conf->keyboard.right = 0;
-	else if (keycode == K_A)
+	else if (keycode == K_ARR_LEFT)
 		conf->keyboard.left = 0;
 	else if (keycode == K_J)
 		conf->keyboard.jump = 0;
@@ -73,13 +73,13 @@ static int	key_press_hook(int keycode, void *param)
 	conf = (t_config*)param;
 	if (keycode == 53)
 		exit_hook(param);
-	if (keycode == K_W)
+	if (keycode == K_ARR_UP)
 		conf->keyboard.up = 1;
-	else if (keycode == K_S)
+	else if (keycode == K_ARR_DOWN)
 		conf->keyboard.down = 1;
-	else if (keycode == K_D)
+	else if (keycode == K_ARR_RIGHT)
 		conf->keyboard.right = 1;
-	else if (keycode == K_A)
+	else if (keycode == K_ARR_LEFT)
 		conf->keyboard.left = 1;
 	else if (keycode == K_J)
 		conf->keyboard.jump = 1;
@@ -94,7 +94,7 @@ void		set_hooks(t_config *conf)
 {
 	mlx_do_key_autorepeatoff(conf->init);
 	mlx_loop_hook(conf->init, update_loop, conf);
-	mlx_hook(conf->window, 2, 0, key_press_hook, conf);
-	mlx_hook(conf->window, 3, 0, key_release_hook, conf);
-	mlx_hook(conf->window, 17, 0, exit_hook, conf);
+	mlx_hook(conf->window, 2, 1L << 0, key_press_hook, conf);
+	mlx_hook(conf->window, 3, 1L << 1, key_release_hook, conf);
+	mlx_hook(conf->window, 33, 1L << 17, exit_hook, conf);
 }

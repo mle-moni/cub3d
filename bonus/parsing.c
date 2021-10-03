@@ -69,11 +69,11 @@ int		parsing(t_config *conf, char *path)
 	if (!verif_path(path))
 		return (quick_error("Wrong conf file: expected \"*.cub\", got: ",
 			path, conf));
-		fd = open(path, O_RDONLY);
+	fd = open(path, O_RDONLY);
 	if (fd < 0)
 		return (quick_error("Error while oppening conf file, path was: ",
 		path, conf));
-		ret = 1;
+	ret = 1;
 	while (ret == 1)
 	{
 		ret = get_next_line(fd, &line);

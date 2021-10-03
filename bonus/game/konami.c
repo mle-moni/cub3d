@@ -16,16 +16,16 @@ void		set_code(t_config *conf)
 {
 	conf->konami.max = 10;
 	conf->konami.solve = 0;
-	conf->konami.code[0] = 126;
-	conf->konami.code[1] = 126;
-	conf->konami.code[2] = 125;
-	conf->konami.code[3] = 125;
-	conf->konami.code[4] = 123;
-	conf->konami.code[5] = 124;
-	conf->konami.code[6] = 123;
-	conf->konami.code[7] = 124;
-	conf->konami.code[8] = 11;
-	conf->konami.code[9] = 0;
+	conf->konami.code[0] = K_ARR_UP;
+	conf->konami.code[1] = K_ARR_UP;
+	conf->konami.code[2] = K_ARR_DOWN;
+	conf->konami.code[3] = K_ARR_DOWN;
+	conf->konami.code[4] = K_ARR_LEFT;
+	conf->konami.code[5] = K_ARR_RIGHT;
+	conf->konami.code[6] = K_ARR_LEFT;
+	conf->konami.code[7] = K_ARR_RIGHT;
+	conf->konami.code[8] = K_B;
+	conf->konami.code[9] = K_A;
 }
 
 void		konami_step(t_config *conf, int keycode)

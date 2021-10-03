@@ -29,6 +29,7 @@ static int	init_mlx_and_start(t_config *conf)
 	conf->player.lives = 2;
 	conf->koopa.exist = 0;
 	conf->win = 0;
+	conf->jump = 0;
 	set_code(conf);
 	mlx_loop(conf->init);
 	return (0);

@@ -82,8 +82,10 @@ int		process(char **final, char *str, char *charset, int *index)
 			is_word++;
 		i++;
 	}
-	if (is_word)
-		return ((int)(final[(*index)++] = dupn(str + i - is_word, is_word)));
+	if (is_word) {
+		char *test = final[(*index)++] = dupn(str + i - is_word, is_word);
+		return test ? 1 : 0;
+	}
 	return (1);
 }
 

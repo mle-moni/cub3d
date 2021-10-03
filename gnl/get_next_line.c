@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "gnl/get_next_line.h"
 
 static void		*my_memset(void *s, size_t n, int fd, int *dont_stop)
 {
